@@ -9,6 +9,192 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { PrismaClient } from '@prisma/client';
+import { unstable_noStore as noStore } from 'next/cache';
+
+const prisma = new PrismaClient();
+
+export async function fetchPrismaRevenue() {
+  noStore();
+
+  try {
+    const data = await prisma.revenue.findMany({
+      select: {
+        month: true,
+        revenue: true,
+      },
+    });
+
+    console.log({ data, date: new Date() });
+    console.log('------');
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    return data;
+  } catch (error) {
+    console.error('Database error:', error);
+    throw new Error('Failed to fetch revenue data');
+  }
+}
+
+export async function fetchInvoicesData() {
+  noStore();
+
+  try {
+    const data = await prisma.user.findMany({
+      select: {
+        name: true,
+        email: true,
+        photo: true,
+        posts: {
+          select: {
+            // slug: true,
+            // title: true,
+            // body: true,
+            comments: {
+              select: {
+                comment: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            posts: true,
+          },
+        },
+      },
+    });
+
+    // console.dir(
+    //   { data, date: new Date().toLocaleString() },
+    //   { depth: Infinity },
+    // );
+
+    const sortedData = data
+      .map((row, id) => ({
+        id: id.toString(),
+        name: row.name,
+        image_url: row.photo,
+        email: row.email,
+        amount: row.posts.reduce(
+          (acc, current) => acc + current.comments.length,
+          0,
+        ),
+      }))
+      .sort((a, b) => (a.amount > b.amount ? -1 : 1));
+
+    console.dir({ sortedData, date: new Date() }, { depth: Infinity });
+    console.log('*******');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return sortedData;
+  } catch (error) {
+    console.error('Database error:', error);
+    throw new Error('Failed to fetch invoice data');
+  }
+}
+
+const ITEMS_PER_PAGE = 6;
+export async function fetchFilteredInvoices(
+  query: string,
+  currentPage: number,
+) {
+  noStore();
+  console.log({ query, currentPage });
+
+  try {
+    const data = await prisma.invoices.findMany({
+      select: {
+        id: true,
+        imageUrl: true,
+        name: true,
+        email: true,
+        status: true,
+        amount: true,
+        date: true,
+      },
+      skip: (currentPage - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
+      where: {
+        OR: [
+          {
+            name: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            status: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    console.log({ 'invoices data': data, date: new Date() });
+    console.log('------');
+
+    return data.map((row, id) => ({
+      id: row.id,
+      image_url: `/customers/${row.imageUrl}`,
+      name: row.name,
+      email: row.email,
+      status: row.status,
+      amount: row.amount,
+      date: row.date.toString(),
+    }));
+  } catch (error) {
+    console.error('Database error:', error);
+    throw new Error('Failed to fetch invoices data');
+  }
+}
+
+export async function totalPagesInvoices(query: string) {
+  noStore();
+
+  try {
+    const count = await prisma.invoices.count({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            status: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+    });
+
+    const totalPageCount = Math.round(count / ITEMS_PER_PAGE);
+    return { totalPageCount, count };
+  } catch (error) {
+    console.error('Database error:', error);
+    throw new Error('Failed to fetch totalPages data');
+  }
+}
 
 export async function fetchRevenue() {
   // Add noStore() here prevent the response from being cached.
@@ -87,8 +273,7 @@ export async function fetchCardData() {
   }
 }
 
-const ITEMS_PER_PAGE = 6;
-export async function fetchFilteredInvoices(
+export async function fetchFilteredInvoicesSql(
   query: string,
   currentPage: number,
 ) {

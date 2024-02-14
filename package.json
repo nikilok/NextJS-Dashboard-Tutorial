@@ -3,14 +3,21 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "migrate": "npx prisma migrate dev --name init",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
-    "start": "next start"
+    "prisma": "node ./scripts/prisma.ts",
+    "seed": "node -r dotenv/config ./scripts/seed.js",
+    "seedMongo": "node ./scripts/prismaMongoDB.js",
+    "start": "next start",
+    "studio": "npx prisma studio",
+    "update-schema": "prisma db push"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@heroicons/react": "^2.0.18",
+    "@prisma/client": "^5.7.1",
     "@tailwindcss/forms": "^0.5.7",
-    "@types/node": "20.5.7",
     "@vercel/postgres": "^0.5.0",
     "autoprefixer": "10.4.15",
     "bcrypt": "^5.1.1",
@@ -20,11 +27,12 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.3",
-    "typescript": "5.2.2",
+    "use-debounce": "^10.0.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.1",
+    "@types/node": "^20.10.6",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.14",
     "@vercel/style-guide": "^5.0.1",
@@ -33,7 +41,10 @@
     "eslint-config-next": "^14.0.0",
     "eslint-config-prettier": "9.0.0",
     "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "0.5.4"
+    "prettier-plugin-tailwindcss": "0.5.4",
+    "prisma": "^5.7.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18.17.0"
