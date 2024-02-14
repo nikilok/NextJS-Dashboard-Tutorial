@@ -100,7 +100,7 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
-  noStore();
+  // noStore();
   console.log({ query, currentPage });
 
   try {
@@ -152,7 +152,7 @@ export async function fetchFilteredInvoices(
       },
     });
 
-    console.dir(data, { depth: Infinity });
+    // console.dir(data, { depth: Infinity });
     console.log('------');
 
     return data.map((row, id) => ({
@@ -171,7 +171,7 @@ export async function fetchFilteredInvoices(
 }
 
 export async function totalPagesInvoices(query: string) {
-  noStore();
+  // noStore();
 
   try {
     const count = await prisma.invoices.count({
@@ -345,6 +345,36 @@ export async function fetchInvoicesPages(query: string) {
 }
 
 export async function fetchInvoiceById(id: string) {
+  try {
+    const data = await prisma.invoices.findUnique({
+      select: {
+        id: true,
+        customerId: true,
+        amount: true,
+        status: true,
+      },
+      where: {
+        id,
+      },
+    });
+
+    if (data) {
+      const invoice = {
+        id: data.id,
+        customerId: data.customerId,
+        amount: data.amount / 100,
+        status: data.status,
+      };
+
+      return invoice;
+    }
+  } catch (err) {
+    console.error('Database error', err);
+    throw new Error('fetchInvoiceById');
+  }
+}
+
+export async function fetchInvoiceByIdSql(id: string) {
   try {
     const data = await sql<InvoiceForm>`
       SELECT

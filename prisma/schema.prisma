@@ -57,7 +57,7 @@ model User {
   id       String     @id @default(auto()) @map("_id") @db.ObjectId
   email    String     @unique
   photo    String?
-  name     String?
+  name     String
   address  Address?
   posts    Post[]
   invoices Invoices[]
