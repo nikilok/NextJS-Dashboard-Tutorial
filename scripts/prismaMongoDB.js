@@ -5,7 +5,7 @@ const fs = require('fs');
 const folderPath = './public/customers';
 
 const randomFileNames = getFiles(folderPath);
-console.log({ randomFileNames });
+// console.log({ randomFileNames });
 
 function getFiles(folderPath) {
   try {
@@ -31,28 +31,68 @@ const prisma = new PrismaClient();
 //   date: Date;
 // }
 
-function createRandomInvoice() {
+// function createRandomInvoice() {
+//   return {
+//     imageUrl: getRandomString(randomFileNames),
+//     email: faker.internet.email(),
+//     name: faker.person.fullName(),
+//     status: getRandomString(['pending', 'paid']),
+//     date: faker.date.past(),
+//     amount: faker.number.int(),
+//   };
+// }
+
+// const Invoices = faker.helpers.multiple(
+//   createRandomInvoice,
+//   {
+//     count: 200,
+//   },
+// );
+
+// console.log({ Invoices });
+
+function createRandomUserAlongWithInvoices() {
   return {
-    imageUrl: getRandomString(randomFileNames),
     email: faker.internet.email(),
     name: faker.person.fullName(),
-    status: getRandomString(['pending', 'paid']),
-    date: faker.date.past(),
-    amount: faker.number.int(),
-  };
+    photo: getRandomString(randomFileNames),
+    address: {
+      street: faker.location.street(),
+      "city": faker.address.city(),
+      "state": faker.address.state(),
+      "zip": faker.address.zipCode()
+    },
+    invoices: {
+      createMany: {
+        data: 
+          Array.from(Array(50).keys()).map(() => ({
+            status: getRandomString(['pending', 'paid']),
+            amount: faker.number.int({ min: 100, max: 100000000 }),
+            date: faker.date.past(),
+          }))
+      }
+    }
+  }
 }
 
-const Invoices = faker.helpers.multiple(
-  createRandomInvoice,
-  {
-    count: 200,
-  },
-);
+// const Users = faker.helpers.multiple(
+//   createRandomUserAlongWithInvoices,
+//   {
+//     count: 1,
+//   },
+// );
+// const User = createRandomUserAlongWithInvoices();
+// console.dir(User, { depth: Infinity});
 
-console.log({ Invoices });
-
+// console.log({ Invoices });
 async function main() {
   // ... you will write your Prisma Client queries here
+  // Create multiple users with multiple invoices
+  // for(let i = 0; i < 100; i++) {
+  //   await prisma.user.create({
+  //     data: createRandomUserAlongWithInvoices()
+  //   });
+  // }
   // Create
   //   await prisma.user.create({
   //     data: {
@@ -166,6 +206,9 @@ async function main() {
   //       },
   //     },
   //   });
+
+  // Delete all Invoices
+  // const deletedUsers = await prisma.invoices.deleteMany();
   // Add a post for user nikil
   // _id 6597f20ae22fdaa6440b1422
   //   const createPostForNikil = await prisma.post.create({

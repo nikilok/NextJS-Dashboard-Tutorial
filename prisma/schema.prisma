@@ -54,12 +54,13 @@ model Post {
 }
 
 model User {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  email   String   @unique
-  photo   String?
-  name    String?
-  address Address?
-  posts   Post[]
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  email    String     @unique
+  photo    String?
+  name     String?
+  address  Address?
+  posts    Post[]
+  invoices Invoices[]
 }
 
 model Comment {
@@ -84,11 +85,10 @@ model Revenue {
 }
 
 model Invoices {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  imageUrl String
-  name     String
-  email    String?
-  status   String
-  amount   Int
-  date     DateTime
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  status     String
+  amount     Int
+  date       DateTime
+  customer   User     @relation(fields: [customerId], references: [id])
+  customerId String   @db.ObjectId
 }

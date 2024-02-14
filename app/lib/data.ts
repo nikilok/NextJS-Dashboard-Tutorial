@@ -63,6 +63,8 @@ export async function fetchInvoicesData() {
           },
         },
       },
+      skip: 0,
+      take: 5,
     });
 
     // console.dir(
@@ -93,7 +95,7 @@ export async function fetchInvoicesData() {
   }
 }
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 100;
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
@@ -105,27 +107,36 @@ export async function fetchFilteredInvoices(
     const data = await prisma.invoices.findMany({
       select: {
         id: true,
-        imageUrl: true,
-        name: true,
-        email: true,
         status: true,
         amount: true,
         date: true,
+        customerId: true,
+        customer: {
+          select: {
+            photo: true,
+            name: true,
+            email: true,
+          },
+        },
       },
       skip: (currentPage - 1) * ITEMS_PER_PAGE,
       take: ITEMS_PER_PAGE,
       where: {
         OR: [
           {
-            name: {
-              contains: query,
-              mode: 'insensitive',
+            customer: {
+              name: {
+                contains: query,
+                mode: 'insensitive',
+              },
             },
           },
           {
-            email: {
-              contains: query,
-              mode: 'insensitive',
+            customer: {
+              email: {
+                contains: query,
+                mode: 'insensitive',
+              },
             },
           },
           {
@@ -137,18 +148,18 @@ export async function fetchFilteredInvoices(
         ],
       },
       orderBy: {
-        name: 'asc',
+        date: 'desc',
       },
     });
 
-    console.log({ 'invoices data': data, date: new Date() });
+    console.dir(data, { depth: Infinity });
     console.log('------');
 
     return data.map((row, id) => ({
       id: row.id,
-      image_url: `/customers/${row.imageUrl}`,
-      name: row.name,
-      email: row.email,
+      image_url: `/customers/${row.customer.photo}`,
+      name: row.customer.name,
+      email: row.customer.email,
       status: row.status,
       amount: row.amount,
       date: row.date.toString(),
@@ -167,15 +178,19 @@ export async function totalPagesInvoices(query: string) {
       where: {
         OR: [
           {
-            name: {
-              contains: query,
-              mode: 'insensitive',
+            customer: {
+              name: {
+                contains: query,
+                mode: 'insensitive',
+              },
             },
           },
           {
-            email: {
-              contains: query,
-              mode: 'insensitive',
+            customer: {
+              email: {
+                contains: query,
+                mode: 'insensitive',
+              },
             },
           },
           {
@@ -355,6 +370,22 @@ export async function fetchInvoiceById(id: string) {
 }
 
 export async function fetchCustomers() {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    return users;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch all customers.');
+  }
+}
+
+export async function fetchCustomersSql() {
   try {
     const data = await sql<CustomerField>`
       SELECT
