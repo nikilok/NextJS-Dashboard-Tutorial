@@ -1,3 +1,5 @@
+import { ITEMS_PER_PAGE } from '../lib/data';
+
 // Loading animation
 const shimmer =
   'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
@@ -169,12 +171,9 @@ export function InvoicesTableSkeleton() {
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
           <div className="md:hidden">
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
+            {Array.from({ length: ITEMS_PER_PAGE }, (_, index) => (
+              <InvoicesMobileSkeleton key={index} />
+            ))}
           </div>
           <table className="hidden min-w-full text-gray-900 md:table">
             <thead className="rounded-lg text-left text-sm font-normal">
@@ -203,12 +202,9 @@ export function InvoicesTableSkeleton() {
               </tr>
             </thead>
             <tbody className="bg-white">
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
+              {Array.from({ length: ITEMS_PER_PAGE }, (_, index) => (
+                <TableRowSkeleton key={index} />
+              ))}
             </tbody>
           </table>
         </div>

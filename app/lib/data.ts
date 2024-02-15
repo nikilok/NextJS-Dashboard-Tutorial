@@ -95,7 +95,55 @@ export async function fetchInvoicesData() {
   }
 }
 
-const ITEMS_PER_PAGE = 100;
+export async function invoiceCollected() {
+  try {
+    const data = await prisma.invoices.count({
+      where: {
+        status: 'paid',
+      },
+    });
+
+    return data;
+  } catch (err) {
+    return { message: 'Database error: failed to get invoice collected' };
+  }
+}
+
+export async function invoicePending() {
+  try {
+    const data = await prisma.invoices.count({
+      where: {
+        status: 'pending',
+      },
+    });
+
+    return data;
+  } catch (err) {
+    return { message: 'Database error: failed to get invoice pending' };
+  }
+}
+
+export async function invoiceTotal() {
+  try {
+    const data = await prisma.invoices.count();
+
+    return data;
+  } catch (err) {
+    return { message: 'Database error: failed to get invoice total' };
+  }
+}
+
+export async function totalCustomers() {
+  try {
+    const data = await prisma.user.count();
+
+    return data;
+  } catch (err) {
+    return { message: 'Database error: failed to get total customers' };
+  }
+}
+
+export const ITEMS_PER_PAGE = 100;
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
