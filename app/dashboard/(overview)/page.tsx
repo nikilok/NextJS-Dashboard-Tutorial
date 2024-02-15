@@ -31,12 +31,12 @@ export default async function Page() {
   //   fetchInvoicesData(),
   // ]);
   const [countCollected, countPending, countTotal, countCustomers] =
-    await Promise.all([
+    (await Promise.all([
       invoiceCollected(),
       invoicePending(),
       invoiceTotal(),
       totalCustomers(),
-    ]);
+    ])) as number[];
 
   return (
     <main>
@@ -44,22 +44,10 @@ export default async function Page() {
         Dashboard
       </h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card
-          title="Collected"
-          value={Number(countCollected)}
-          type="collected"
-        />
-        <Card title="Pending" value={Number(countPending)} type="pending" />
-        <Card
-          title="Total Invoices"
-          value={Number(countTotal)}
-          type="invoices"
-        />
-        <Card
-          title="Total Customers"
-          value={Number(countCustomers)}
-          type="customers"
-        />
+        <Card title="Collected" value={countCollected} type="collected" />
+        <Card title="Pending" value={countPending} type="pending" />
+        <Card title="Total Invoices" value={countTotal} type="invoices" />
+        <Card title="Total Customers" value={countCustomers} type="customers" />
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
         <Suspense fallback={<RevenueChartSkeleton />}>
