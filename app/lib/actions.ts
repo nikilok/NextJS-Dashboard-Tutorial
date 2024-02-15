@@ -31,12 +31,11 @@ export async function createInvoice(formData: FormData) {
         customerId,
       },
     });
+    revalidatePath('/dashboard/invoices');
   } catch (err) {
-    console.error('Database error', err);
-    throw new Error('createInvoice action');
+    return { message: 'Database error: Failed to create invoice' };
   }
 
-  revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
 
@@ -62,12 +61,11 @@ export async function updateInvoice(id: string, formData: FormData) {
         status,
       },
     });
+    revalidatePath('/dashboard/invoices');
   } catch (err) {
-    console.error('Database error', err);
-    throw new Error('updateInvoice action');
+    return { message: 'Database error: Failed to update invoice' };
   }
 
-  revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
 
@@ -78,10 +76,8 @@ export async function deleteInvoice(id: string) {
         id,
       },
     });
+    revalidatePath('/dashboard/invoices');
   } catch (err) {
-    console.error('Database error', err);
-    throw new Error('deleteInvoice action');
+    return { message: 'Database error: Failed to delete invoice' };
   }
-
-  revalidatePath('/dashboard/invoices');
 }
