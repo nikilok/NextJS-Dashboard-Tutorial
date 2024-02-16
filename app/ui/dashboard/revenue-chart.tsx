@@ -11,12 +11,13 @@ import { fetchPrismaRevenue } from '@/app/lib/data';
 // https://airbnb.io/visx/
 
 export default async function RevenueChart() {
-// {
-//   revenue,
-// }: {
-//   revenue: Revenue[];
-// }
+  // {
+  //   revenue,
+  // }: {
+  //   revenue: Revenue[];
+  // }
   const revenue = await fetchPrismaRevenue();
+
   const chartHeight = 350;
   // NOTE: comment in this code when you get to this point in the course
 
@@ -53,7 +54,7 @@ export default async function RevenueChart() {
                 }}
               ></div>
               <p className="rotate-90 text-sm text-gray-400 sm:rotate-90">
-                {month.month}
+                {month.month.substring(0, 3)}
               </p>
             </div>
           ))}

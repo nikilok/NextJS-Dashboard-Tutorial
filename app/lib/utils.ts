@@ -26,11 +26,14 @@ export const generateYAxis = (revenue: Revenue[]) => {
   // based on highest record and in 1000s
   const yAxisLabels = [];
   const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-  const topLabel = Math.ceil(highestRecord / 1000) * 1000;
+  const factor = 1e9;
+  const topLabel = Math.ceil(highestRecord / factor) * factor;
 
-  for (let i = topLabel; i >= 0; i -= 1000) {
-    yAxisLabels.push(`$${i / 1000}K`);
-  }
+  // for (let i = topLabel; i >= 0; i -= 1000) {
+  yAxisLabels.push(`$${topLabel / factor}B`);
+  yAxisLabels.push(`$${topLabel / factor / 2}B`);
+  yAxisLabels.push(`$${topLabel / factor / 3}B`);
+  // }
 
   return { yAxisLabels, topLabel };
 };
@@ -67,3 +70,41 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     totalPages,
   ];
 };
+
+export function sortRevenueByMonth(
+  revenueData: { month: string; revenue: number }[],
+) {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  // Get the current month (0-indexed)
+  const currentMonth = new Date().getMonth();
+
+  // Sort the array based on month order
+  const sortedData = revenueData.sort((a, b) => {
+    const monthA = months.indexOf(a.month);
+    const monthB = months.indexOf(b.month);
+
+    // Adjust month index to handle circular sorting
+    const adjustedMonthA = monthA >= currentMonth ? monthA : monthA + 12;
+    const adjustedMonthB = monthB >= currentMonth ? monthB : monthB + 12;
+
+    return adjustedMonthA - adjustedMonthB;
+  });
+  const firstElement = sortedData.shift();
+  sortedData.push(firstElement as { revenue: number; month: string });
+
+  return sortedData;
+}

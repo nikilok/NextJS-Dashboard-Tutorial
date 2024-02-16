@@ -8,13 +8,13 @@ import {
   User,
   Revenue,
 } from './definitions';
-import { formatCurrency } from './utils';
+import { formatCurrency, sortRevenueByMonth } from './utils';
 import { PrismaClient } from '@prisma/client';
 import { unstable_noStore as noStore } from 'next/cache';
 
 const prisma = new PrismaClient();
 
-export async function fetchPrismaRevenue() {
+export async function fetchPrismaRevenueOld() {
   noStore();
 
   try {
@@ -33,6 +33,43 @@ export async function fetchPrismaRevenue() {
   } catch (error) {
     console.error('Database error:', error);
     throw new Error('Failed to fetch revenue data');
+  }
+}
+export async function fetchPrismaRevenue() {
+  // noStore();
+
+  const today = new Date();
+  const twelveMonthsAgo = new Date(today);
+  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+  try {
+    const invoices = await prisma.invoices.findMany({
+      where: {
+        date: {
+          gte: twelveMonthsAgo, // Greater than or equal to 12 months ago
+          lte: today, // Less than or equal to today
+        },
+      },
+    });
+
+    const invoicesByMonth = invoices.reduce((result, { date, amount }) => {
+      const month = date.toLocaleString('default', { month: 'long' });
+      //@ts-ignore
+      result[month] = (result[month] || 0) + amount;
+      return result;
+    }, {});
+
+    const revenueByMonth = Object.entries(invoicesByMonth).map(
+      ([month, revenue]) => ({
+        month,
+        revenue: Number(revenue),
+      }),
+    );
+
+    const sortedRevenue = sortRevenueByMonth(revenueByMonth);
+    return sortedRevenue;
+  } catch (error) {
+    console.error('Database error:', error);
+    throw new Error('Failed to fetch revenue by month data');
   }
 }
 
