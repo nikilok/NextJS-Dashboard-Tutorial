@@ -44,10 +44,17 @@ export async function fetchPrismaRevenue() {
   try {
     const invoices = await prisma.invoices.findMany({
       where: {
-        date: {
-          gte: twelveMonthsAgo, // Greater than or equal to 12 months ago
-          lte: today, // Less than or equal to today
-        },
+        AND: [
+          {
+            date: {
+              gte: twelveMonthsAgo, // Greater than or equal to 12 months ago
+              lte: today, // Less than or equal to today
+            },
+          },
+          {
+            status: 'paid',
+          },
+        ],
       },
     });
 
