@@ -155,6 +155,9 @@ export async function fetchInvoicesData() {
           },
         },
       },
+      where: {
+        status: 'pending',
+      },
       orderBy: {
         date: 'desc',
       },
