@@ -36,32 +36,83 @@ export async function fetchPrismaRevenue() {
   }
 }
 
+// export async function fetchInvoicesDataOld() {
+//   noStore();
+
+//   try {
+//     const data = await prisma.user.findMany({
+//       select: {
+//         name: true,
+//         email: true,
+//         photo: true,
+//         posts: {
+//           select: {
+//             // slug: true,
+//             // title: true,
+//             // body: true,
+//             comments: {
+//               select: {
+//                 comment: true,
+//               },
+//             },
+//           },
+//         },
+//         _count: {
+//           select: {
+//             posts: true,
+//           },
+//         },
+//       },
+//       skip: 0,
+//       take: 5,
+//     });
+
+//     // console.dir(
+//     //   { data, date: new Date().toLocaleString() },
+//     //   { depth: Infinity },
+//     // );
+
+//     const sortedData = data
+//       .map((row, id) => ({
+//         id: id.toString(),
+//         name: row.name,
+//         image_url: row.photo,
+//         email: row.email,
+//         amount: row.posts.reduce(
+//           (acc, current) => acc + current.comments.length,
+//           0,
+//         ),
+//       }))
+//       .sort((a, b) => (a.amount > b.amount ? -1 : 1));
+
+//     console.dir({ sortedData, date: new Date() }, { depth: Infinity });
+//     console.log('*******');
+//     await new Promise((resolve) => setTimeout(resolve, 1000));
+//     return sortedData;
+//   } catch (error) {
+//     console.error('Database error:', error);
+//     throw new Error('Failed to fetch invoice data');
+//   }
+// }
+
 export async function fetchInvoicesData() {
   noStore();
 
   try {
-    const data = await prisma.user.findMany({
+    const data = await prisma.invoices.findMany({
       select: {
-        name: true,
-        email: true,
-        photo: true,
-        posts: {
+        id: true,
+        amount: true,
+        customer: {
           select: {
-            // slug: true,
-            // title: true,
-            // body: true,
-            comments: {
-              select: {
-                comment: true,
-              },
-            },
+            name: true,
+            photo: true,
+            email: true,
           },
         },
-        _count: {
-          select: {
-            posts: true,
-          },
-        },
+      },
+      orderBy: {
+        date: 'desc',
       },
       skip: 0,
       take: 5,
@@ -72,18 +123,13 @@ export async function fetchInvoicesData() {
     //   { depth: Infinity },
     // );
 
-    const sortedData = data
-      .map((row, id) => ({
-        id: id.toString(),
-        name: row.name,
-        image_url: row.photo,
-        email: row.email,
-        amount: row.posts.reduce(
-          (acc, current) => acc + current.comments.length,
-          0,
-        ),
-      }))
-      .sort((a, b) => (a.amount > b.amount ? -1 : 1));
+    const sortedData = data.map((row, id) => ({
+      id: id.toString(),
+      name: row.customer.name,
+      image_url: row.customer.photo,
+      email: row.customer.email,
+      amount: row.amount,
+    }));
 
     console.dir({ sortedData, date: new Date() }, { depth: Infinity });
     console.log('*******');

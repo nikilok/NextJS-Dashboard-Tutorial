@@ -4,12 +4,13 @@ import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
 import { LatestInvoice } from '@/app/lib/definitions';
 import { fetchInvoicesData } from '@/app/lib/data';
+import { formatCurrency } from '@/app/lib/utils';
 export default async function LatestInvoices() {
-//   {
-//   latestInvoices,
-// }: {
-//   latestInvoices: LatestInvoice[];
-// }
+  //   {
+  //   latestInvoices,
+  // }: {
+  //   latestInvoices: LatestInvoice[];
+  // }
   const latestInvoices = await fetchInvoicesData();
   return (
     <div className="flex w-full flex-col md:col-span-4">
@@ -51,7 +52,7 @@ export default async function LatestInvoices() {
                 <p
                   className={`${lusitana.className} truncate text-sm font-medium md:text-base`}
                 >
-                  {invoice.amount}
+                  {formatCurrency(invoice.amount)}
                 </p>
               </div>
             );
