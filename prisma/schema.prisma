@@ -78,12 +78,6 @@ type Address {
   zip    String
 }
 
-model Revenue {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  month   String
-  revenue Int
-}
-
 model Invoices {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   status     String

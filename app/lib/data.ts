@@ -14,29 +14,8 @@ import { unstable_noStore as noStore } from 'next/cache';
 
 const prisma = new PrismaClient();
 
-export async function fetchPrismaRevenueOld() {
-  noStore();
-
-  try {
-    const data = await prisma.revenue.findMany({
-      select: {
-        month: true,
-        revenue: true,
-      },
-    });
-
-    console.log({ data, date: new Date() });
-    console.log('------');
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-
-    return data;
-  } catch (error) {
-    console.error('Database error:', error);
-    throw new Error('Failed to fetch revenue data');
-  }
-}
 export async function fetchPrismaRevenue() {
-  // noStore();
+  noStore();
 
   const today = new Date();
   const twelveMonthsAgo = new Date(today);
