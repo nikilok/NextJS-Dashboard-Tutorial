@@ -323,7 +323,7 @@ export async function totalPagesInvoices(query: string) {
       },
     });
 
-    const totalPageCount = Math.round(count / ITEMS_PER_PAGE);
+    const totalPageCount = Math.ceil(count / ITEMS_PER_PAGE);
     return { totalPageCount, count };
   } catch (error) {
     console.error('Database error:', error);
@@ -593,5 +593,75 @@ export async function getUser(email: string) {
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
+  }
+}
+
+export async function getCustomersCount(query: string) {
+  try {
+    const count = await prisma.user.count({
+      where: {
+        OR: [
+          {
+            name: { contains: query, mode: 'insensitive' },
+          },
+          {
+            email: { contains: query, mode: 'insensitive' },
+          },
+        ],
+      },
+    });
+
+    const totalPageCount = Math.ceil(count / ITEMS_PER_PAGE);
+    return { totalPageCount, count };
+  } catch (err) {
+    return { message: 'Database error, fetching customers count' };
+  }
+}
+
+export async function getCustomersTable(query: string, currentPage: number) {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        photo: true,
+        name: true,
+        invoices: {
+          select: {
+            status: true,
+          },
+        },
+      },
+      where: {
+        OR: [
+          {
+            name: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+      skip: (currentPage - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
+    });
+
+    return users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      image_url: `/customers/${user.photo}`,
+      name: user.name,
+      total_invoices: user.invoices.length,
+      total_pending: user.invoices.filter((p) => p.status === 'pending').length,
+      total_paid: user.invoices.filter((p) => p.status === 'paid').length,
+    }));
+  } catch (error) {
+    console.error('Error fetching data:', error);
   }
 }
