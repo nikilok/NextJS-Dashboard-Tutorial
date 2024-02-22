@@ -6,6 +6,7 @@ import {
   FormattedCustomersTable,
 } from '@/app/lib/definitions';
 import { getCustomersTable } from '@/app/lib/data';
+import Link from 'next/link';
 
 export default async function CustomersTable({
   // customers,
@@ -41,7 +42,12 @@ export default async function CustomersTable({
                               width={28}
                               height={28}
                             />
-                            <p>{customer.name}</p>
+                            <Link
+                              href={`/dashboard/invoices?query=${customer.name}`}
+                              className="underline underline-offset-4"
+                            >
+                              {customer.name}
+                            </Link>
                           </div>
                         </div>
                         <p className="text-sm text-gray-500">
@@ -98,7 +104,12 @@ export default async function CustomersTable({
                             width={28}
                             height={28}
                           />
-                          <p>{customer.name}</p>
+                          <Link
+                            href={`/dashboard/invoices?query=${customer.name}`}
+                            className="underline underline-offset-4 transition-colors hover:text-sky-800"
+                          >
+                            {customer.name}
+                          </Link>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
