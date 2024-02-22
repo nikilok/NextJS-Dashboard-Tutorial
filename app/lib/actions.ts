@@ -84,7 +84,9 @@ export type CustomerState = {
 
 const CustomerSchema = z.object({
   id: z.string(),
-  email: z.string().email({ message: 'Please enter a valid email' }),
+  email: z
+    .string()
+    .email({ message: 'Please enter a valid email (eg: user@domain.com)' }),
   photo: z.string(),
   name: z
     .string()
