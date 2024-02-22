@@ -93,6 +93,20 @@ async function main() {
   //     data: createRandomUserAlongWithInvoices()
   //   });
   // }
+  // const {id} = await prisma.user.findFirst({
+  //   where: {
+  //     name: {
+  //       contains: 'user name',
+  //       mode: 'insensitive'
+  //     }
+  //   }
+  // })
+  // console.log('id', id);
+  // await prisma.user.delete({
+  //   where: {
+  //     id
+  //   }
+  // })
   // Create
   //   await prisma.user.create({
   //     data: {
