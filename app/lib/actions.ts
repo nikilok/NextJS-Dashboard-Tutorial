@@ -70,6 +70,83 @@ export async function createInvoice(prevState: State, formData: FormData) {
   redirect('/dashboard/invoices');
 }
 
+export type CustomerState = {
+  errors?: {
+    email?: string[];
+    name?: string[];
+    street?: string[];
+    city?: string[];
+    state?: string[];
+    zip?: string[];
+  };
+  message?: string | null;
+};
+
+const CustomerSchema = z.object({
+  id: z.string(),
+  email: z.string().email({ message: 'Please enter a valid email' }),
+  photo: z.string(),
+  name: z
+    .string()
+    .min(2)
+    .refine((name) => name.length > 2 && typeof name === 'string', {
+      message: 'Please enter a valid name',
+    }),
+  street: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zip: z.string().optional(),
+});
+
+const CreateCustomer = CustomerSchema.omit({ id: true, photo: true });
+
+export async function createCustomer(
+  prevState: CustomerState,
+  formData: FormData,
+) {
+  //   const rawFormData = Object.fromEntries(formData.entries());
+
+  const validatedFields = CreateCustomer.safeParse({
+    email: formData.get('email'),
+    name: formData.get('name'),
+    street: formData.get('street'),
+    city: formData.get('city'),
+    state: formData.get('state'),
+    zip: formData.get('zip'),
+  });
+
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Customer.',
+    };
+  }
+
+  const { email, name, street, city, state, zip } = validatedFields.data;
+
+  try {
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        photo: 'user.png',
+        address: {
+          city,
+          state,
+          zip,
+          street,
+        },
+      },
+    });
+    revalidatePath('/dashboard/customers');
+  } catch (err) {
+    return { message: 'Database error: Failed to create invoice' };
+  }
+
+  redirect('/dashboard/customers');
+}
+
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
 export async function updateInvoice(

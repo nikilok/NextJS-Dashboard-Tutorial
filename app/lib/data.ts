@@ -650,6 +650,9 @@ export async function getCustomersTable(query: string, currentPage: number) {
       },
       skip: (currentPage - 1) * ITEMS_PER_PAGE,
       take: ITEMS_PER_PAGE,
+      orderBy: {
+        name: 'asc',
+      },
     });
 
     return users.map((user) => ({
