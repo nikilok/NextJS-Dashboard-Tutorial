@@ -143,7 +143,7 @@ export async function createCustomer(
     });
     revalidatePath('/dashboard/customers');
   } catch (err) {
-    return { message: 'Database error: Failed to create invoice' };
+    return { message: `Database error: Failed to create invoice: ${err}` };
   }
 
   redirect('/dashboard/customers');

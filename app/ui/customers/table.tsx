@@ -44,7 +44,7 @@ export default async function CustomersTable({
                             />
                             <Link
                               href={`/dashboard/invoices?query=${customer.name}`}
-                              className="underline underline-offset-4"
+                              className="font-semibold text-blue-500"
                             >
                               {customer.name}
                             </Link>
@@ -106,7 +106,7 @@ export default async function CustomersTable({
                           />
                           <Link
                             href={`/dashboard/invoices?query=${customer.name}`}
-                            className="underline underline-offset-4 transition-colors hover:text-sky-800"
+                            className="text-blue-500 transition-colors hover:text-sky-800"
                           >
                             {customer.name}
                           </Link>
