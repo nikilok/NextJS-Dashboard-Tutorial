@@ -7,8 +7,6 @@ import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import { useEffect } from 'react';
 
 export default function Maps() {
-  //   const mapElement = useRef(null);
-
   useEffect(() => {
     // Data
     const groupData = [
