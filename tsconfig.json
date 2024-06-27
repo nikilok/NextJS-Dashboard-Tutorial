@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/lib/placeholder-data.js",
-    "scripts/seed.js"
-, "scripts/prismaMongoDB.js"  ],
+    "scripts/seed.js",
+    "scripts/prismaMongoDB.js"
+  ],
   "exclude": ["node_modules"]
 }

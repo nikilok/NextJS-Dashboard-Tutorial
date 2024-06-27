@@ -22,6 +22,10 @@ export default function RootLayout({
       >
         {children}
       </body>
+      <script src="https://cdn.amcharts.com/lib/version/5.9.12/index.js"></script>
+      <script src="https://cdn.amcharts.com/lib/version/5.9.12/map.js"></script>
+      <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+      <script src="https://cdn.amcharts.com/lib/version/5.9.12/themes/Animated.js"></script>
     </html>
   );
 }

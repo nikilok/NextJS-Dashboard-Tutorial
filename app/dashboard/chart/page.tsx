@@ -1,6 +1,10 @@
-import Maps from '@/app/ui/dashboard/chart/map';
+// import Maps from '@/app/ui/dashboard/chart/map';
 import { lusitana } from '@/app/ui/fonts';
 import { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+const Maps = dynamic(() => import('@/app/ui/dashboard/chart/map'), {
+  ssr: false, // Prevent server-side rendering
+});
 
 export const metadata: Metadata = {
   title: 'chart',

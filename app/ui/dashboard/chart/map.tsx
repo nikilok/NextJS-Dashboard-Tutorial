@@ -1,9 +1,18 @@
 'use client';
 
-import * as am5 from '@amcharts/amcharts5';
-import * as am5map from '@amcharts/amcharts5/map';
-import am5geodata_worldLow from '@amcharts/amcharts4-geodata/worldLow';
-import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
+declare global {
+  interface Window {
+    am5: any;
+    am5map: any;
+    am5geodata_worldLow: any;
+    am5themes_Animated: any;
+  }
+}
+
+const am5 = window.am5;
+const am5map = window.am5map;
+const am5geodata_worldLow = window.am5geodata_worldLow;
+const am5themes_Animated = window.am5themes_Animated;
 import { useEffect } from 'react';
 
 export default function Maps() {
