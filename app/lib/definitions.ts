@@ -9,6 +9,20 @@ export type User = {
   password: string;
 };
 
+export type FullUser = {
+  id: string;
+  email: string;
+  image_url: string;
+  name: string;
+  total_invoices: number;
+  total_pending: number;
+  total_paid: number;
+};
+
+export type Error = {
+  message: string;
+};
+
 export type Customer = {
   id: string;
   name: string;
